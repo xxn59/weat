@@ -20,17 +20,14 @@
         {{ form.hidden_tag() }}
         <p>
             Please enter your nickname and floor:<br>
-            {{ form.nickname(size=20) }}
+            nickname:{{ form.nickname(size=20) }}
             {% for error in form.nickname.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}<br>
-            {{ form.floor}}
+            floor:{{ form.floor}}
             {% for error in form.floor.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}<br>
-            |{% for pr in providers %}
-                <a href="javascript:set_openid('{{ pr.url }}', '{{ pr.name }}');">{{ pr.name }}</a> |
-            {% endfor %}
         </p>
         <p>{{ form.remember_me }} Remember Me</p>
         <p><input type="submit" value="Sign In"></p>

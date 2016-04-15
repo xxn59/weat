@@ -30,20 +30,24 @@ def internal_error(error):
 @login_required
 def index():
     user = g.user
-    posts = [
+    orders = [
         {
-            'author': {'nickname': 'John'},
-            'body': 'Post 1'
+            'name': 'Mango Tofu Salad',
+            'price': '27',
+            'quant': '1',
+			'floor': '23'
         },
         {
-            'author': {'nickname': 'Susan'},
-            'body': 'Post 2'
+            'name': 'Quinoa Okra Beef Salad',
+            'price': '35',
+            'quant': '1',
+			'floor': '23'
         }
     ]
     return render_template('index.html',
                            title='Home',
                            user=user,
-                           posts=posts)
+                           orders=orders)
 
 @app.route('/orders', methods=['GET', 'POST'])
 @login_required
@@ -86,8 +90,9 @@ def login():
             db.session.commit()
         else:
             print 'nickname exist:',user.nickname
-            login_user(user, remember=session['remember_me'])
-            return redirect(request.args.get('next') or url_for('index'))
+
+        login_user(user, remember=session['remember_me'])
+        return redirect(request.args.get('next') or url_for('index'))            
         #remember_me = False
         #return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
     return render_template('login.html',

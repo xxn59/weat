@@ -16,6 +16,15 @@ def before_request():
     g.user = current_user
 
 
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -91,3 +100,13 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+@app.route('/user/<nickname>')
+@app.route('/user/<nickname>/<int:page>')
+@login_required
+def user(nickname, page=1):
+    user = User.query.filter_by(nickname=nickname).first()
+    if user is None:
+        flash('User %s not found.' % nickname)
+        return redirect(url_for('index'))
+    return render_template('user.html',
+                           user=user)

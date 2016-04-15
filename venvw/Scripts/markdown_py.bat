@@ -1,0 +1,1 @@
+@"c:\users\simon\documents\git\weat\venvw\scripts\python.exe" "c:\users\simon\documents\git\weat\venvw\Scripts\markdown_py" %*

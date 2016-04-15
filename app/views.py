@@ -24,17 +24,39 @@ def index():
     posts = [
         {
             'author': {'nickname': 'John'},
-            'body': 'Beautiful day in Portland!'
+            'body': 'Post 1'
         },
         {
             'author': {'nickname': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
+            'body': 'Post 2'
         }
     ]
     return render_template('index.html',
                            title='Home',
                            user=user,
                            posts=posts)
+
+@app.route('/orders', methods=['GET', 'POST'])
+@login_required
+def orders():
+    user = g.user
+    orders = [
+        {
+            'name': 'Beautiful day in Portland!',
+            'price': '27',
+            'quant': '1'
+        },
+        {
+            'name': 'The Avengers movie was so cool!',
+            'price': '35',
+            'quant': '1'
+        }
+    ]
+    return render_template('orders.html',
+                           title = 'My Orders',
+                           user = user,
+                           orders = orders)
+                           
 
 
 @app.route('/login', methods=['GET', 'POST'])

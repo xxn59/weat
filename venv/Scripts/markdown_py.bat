@@ -1,1 +1,0 @@
-@"f:\kuaipan\git\weat3\venv\scripts\python.exe" "f:\kuaipan\git\weat3\venv\Scripts\markdown_py" %*

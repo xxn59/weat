@@ -13,3 +13,6 @@ class SignupForm(Form):
     nickname = StringField('nickname', validators=[DataRequired()])
     floor = IntegerField('floor', validators=[DataRequired()])
 
+class FoodForm(Form):
+    name = StringField('name', validators=[DataRequired()])
+    price = IntegerField('price', validators=[DataRequired()])

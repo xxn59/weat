@@ -37,14 +37,31 @@ class Order(db.Model):
     cos_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     salads = db.relationship('Salad', backref='including_order', lazy='dynamic')
 
+    def __repr__(self):
+        return '<Order %r>' % (self.body)
+
+cuisine = db.Table('cuisine',
+                   db.Column('salad_id', db.Integer, db.ForeignKey('salad.id')),
+                   db.Column('food_id', db.Integer, db.ForeignKey('food.id'))
+                   )
 
 class Salad(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), index=True)
     name_zh = db.Column(db.String(40))
     price = db.Column(db.Integer, default=0)
+    components = db.relationship('Food', secondary=cuisine, backref='salads', lazy='dynamic')
     description = db.Column(db.String(140))
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
 
     def __repr__(self):
         return '<Post %r>' % (self.body)
+
+class Food(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(10), index=True)
+    price = db.Column(db.Integer, default=0)
+
+
+    def __unicode__(self):
+        return self.name

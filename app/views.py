@@ -145,7 +145,9 @@ def logout():
 def user(nickname, page=1):
     user = User.query.filter_by(nickname=nickname).first()
     if user is None:
+        print 'user is none in /user/profile'
         flash('User %s not found.' % nickname)
         return redirect(url_for('index'))
+    print 'user:', user.nickname
     return render_template('user.html',
                            user=user)

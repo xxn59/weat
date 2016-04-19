@@ -2,8 +2,8 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from . import db, lm
 from . import app
-from .forms import LoginForm, SignupForm
-from .models import User
+from .forms import LoginForm, SignupForm, FoodForm
+from .models import User, Food
 
 
 @lm.user_loader
@@ -151,3 +151,24 @@ def user(nickname, page=1):
     print 'user:', user.nickname
     return render_template('user.html',
                            user=user)
+
+
+@app.route('/food_add', methods=['GET', 'POST'])
+@login_required
+def food_add():
+    form = FoodForm()
+    if form.validate_on_submit():
+        print 'food add commit'
+        food = Food.query.filter_by(name=form.name.data).first()
+        if food is None:
+            food = Food(name=form.name.data, price=form.price.data)
+            db.session.add(food)
+            db.session.commit()
+            flash('add food %s succeed!' %food.name)
+            print 'food added:', food.name
+        else:
+            print 'food exists:', food.name
+            flash('this food is already included.')
+    return render_template('food_add.html',
+                           title='Add new food',
+                           form=form)

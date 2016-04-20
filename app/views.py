@@ -3,7 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from . import db, lm
 from . import app
 from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, DeleteForm
-from .models import User, Food
+from .models import User, Food, Salad, Order
 
 
 @lm.user_loader
@@ -176,23 +176,40 @@ def food_add():
     return render_template('food_add.html',
                            title='Add new food',
                            form=form,
-                           form_del=form_del,
                            foods=foods)
 
 
 @app.route('/order_add', methods=['GET', 'POST'])
+@login_required
 def order_add():
+    user = g.user
     form = DeleteForm()
 
     foods = Food.query.all()
+    new_order = Order()
+    new_salad = Salad()
+    # new_food = Food()
 
     if request.method == 'POST':
-        print request.form.values
-        for food in foods:
-            click_id = food.id
-            if request.form.get('add', None) == "%d" %click_id:
-                print 'hahaha', click_id
-                # db.session.add
+        # print request.form.values
+
+        done = request.form.get('over', None)
+        print done
+        if done == "7963":
+            print 'yes,done=7963'
+            new_order.add_salad(new_salad)
+            user.add_order(new_order)
+            return redirect(url_for('index'))
+        else:
+            return redirect(url_for('order_add'))
+
+        click_id = request.form.get('add', None)
+        print click_id
+        food = Food.query.get(click_id)
+        new_salad.add_food(food)
+        print food.name
+
+
 
     if form.validate_on_submit():
         print 'here'
@@ -205,6 +222,7 @@ def order_add():
         #         db.delete(food1)
         #         print 'food deleted:', food1.name
         #         db.commit()
+        #
     return render_template('order_add.html',
                            title='add new order',
                            form=form,

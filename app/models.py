@@ -27,6 +27,14 @@ class User(db.Model):
         except NameError:
             return str(self.id)  # python 3
 
+    def add_order(self, order):
+        self.orders.append(order)
+        return self
+
+    def del_order(self, order):
+        self.orders.remove(order)
+        return self
+
     def __repr__(self):
         return '<User %r>' % (self.nickname)
 
@@ -36,6 +44,15 @@ class Order(db.Model):
     timestamp = db.Column(db.DateTime)
     cos_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     salads = db.relationship('Salad', backref='including_order', lazy='dynamic')
+
+    def add_salad(self, salad):
+        self.salads.append(salad)
+        return self
+
+    def del_salad(self, salad):
+        self.salads.remove(salad)
+        return self
+
 
     def __repr__(self):
         return '<Order %r>' % (self.body)
@@ -53,6 +70,17 @@ class Salad(db.Model):
     components = db.relationship('Food', secondary=cuisine, backref='salads', lazy='dynamic')
     description = db.Column(db.String(140))
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
+
+    def add_food(self, food):
+        self.components.append(food)
+        return self
+
+    def del_food(self, food):
+        self.components.remove(food)
+        return self
+
+    def including(self, food):
+        return self
 
     def __repr__(self):
         return '<Post %r>' % (self.body)

@@ -30,10 +30,13 @@
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% endif %}
             </ul>
+
             <div class="nav-collapse in collapse" style="height: auto;">
-                <li><a href="{{ url_for('orders') }}">Orders</a></li>
-                <li><a href="{{ url_for('order_add') }}">Add Order</a></li>
-                <li><a href="{{ url_for('food_add') }}">Add food</a></li>
+                <ul class="nav">
+                    <li><a href="{{ url_for('orders') }}">Orders</a></li>
+                    <li><a href="{{ url_for('order_add') }}">Add Order</a></li>
+                    <li><a href="{{ url_for('food_add') }}">Add food</a></li>
+                </ul>
             </div>
 
             <div class="nav-collapse collapse">

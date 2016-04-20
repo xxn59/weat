@@ -1,18 +1,32 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, IntegerField
-from wtforms.validators import DataRequired,Length
+from wtforms import StringField, BooleanField, IntegerField, SubmitField, PasswordField
+from wtforms.validators import DataRequired, Length, Required, EqualTo
 
 
 class LoginForm(Form):
-    #openid = StringField('openid', validators=[DataRequired()])
+    # openid = StringField('openid', validators=[DataRequired()])
     nickname = StringField('nickname', validators=[DataRequired()])
     remember_me = BooleanField('remember_me', default=False)
+
 
 class SignupForm(Form):
     group_code = StringField('group_code', validators=[Length(min=4, max=10)])
     nickname = StringField('nickname', validators=[DataRequired()])
     floor = IntegerField('floor', validators=[DataRequired()])
 
+
 class FoodForm(Form):
     name = StringField('name', validators=[DataRequired()])
     price = IntegerField('price', validators=[DataRequired()])
+
+
+class DeleteForm(Form):
+    remove_id = IntegerField('remove_id')
+
+
+class ChangePasswordForm(Form):
+    old_password = PasswordField('Old password', validators=[Required()])
+    password = PasswordField('New password', validators=[
+        Required(), EqualTo('password2', message='Passwords must match')])
+    password2 = PasswordField('Confirm new password', validators=[Required()])
+    submit = SubmitField('Update Password', default=9999)

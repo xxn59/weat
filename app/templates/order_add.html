@@ -1,0 +1,29 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<h3>Add new order</h3>
+<form action="" method="post" name="order_add">
+    <table class="table table-condensed table-hover">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>price</th>
+    </tr>
+    </thead>
+    {% for food in foods %}
+        <tr class="success">
+            <td>{{food.id}}</td>
+            <td>{{food.name}}</td>
+            <td>{{food.price}}</td>
+            <td><button type="submit" name="add" value="{{food.id}}" />到碗里来</td>
+            <td></td>
+        </tr>
+    {% endfor %}
+    </table>
+    </p>
+
+</form>
+{% endblock %}

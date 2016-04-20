@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from . import db, lm
 from . import app
-from .forms import LoginForm, SignupForm, FoodForm
+from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, DeleteForm
 from .models import User, Food
 
 
@@ -157,7 +157,9 @@ def user(nickname, page=1):
 @login_required
 def food_add():
     form = FoodForm()
+
     foods = Food.query.all()
+
     if form.validate_on_submit():
         print 'food add commit'
         food = Food.query.filter_by(name=form.name.data).first()
@@ -165,15 +167,49 @@ def food_add():
             food = Food(name=form.name.data, price=form.price.data)
             db.session.add(food)
             db.session.commit()
-            flash('add food %s succeed!' %food.name)
-            print 'food added:', food.name
+            flash('add food %s succeed!' % food.name)
+            # print 'food added:', food.name
+            return redirect(url_for('food_add'))
         else:
             print 'food exists:', food.name
             flash('this food is already included.')
     return render_template('food_add.html',
                            title='Add new food',
                            form=form,
+                           form_del=form_del,
                            foods=foods)
+
+
+@app.route('/order_add', methods=['GET', 'POST'])
+def order_add():
+    form = DeleteForm()
+
+    foods = Food.query.all()
+
+    if request.method == 'POST':
+        print request.form.values
+        for food in foods:
+            click_id = food.id
+            if request.form.get('add', None) == "%d" %click_id:
+                print 'hahaha', click_id
+                # db.session.add
+
+    if form.validate_on_submit():
+        print 'here'
+        # if form.remove_id.data is not None and form.remove_id.data != 9999:
+        #     print 'remove id:', form.remove_id.data
+        #     food1 = foods.query.filter_by(id=form.remove_id.data)
+        #     if food1 is None:
+        #         print 'delete error:', form.remove_id.data
+        #     else:
+        #         db.delete(food1)
+        #         print 'food deleted:', food1.name
+        #         db.commit()
+    return render_template('order_add.html',
+                           title='add new order',
+                           form=form,
+                           foods=foods)
+
 
 # @app.route('/foods', methods=['GET', 'POST'])
 # @login_required
@@ -182,3 +218,9 @@ def food_add():
 #     return render_template('foods.html',
 #                            title='foods',
 #                            foods=foods)
+
+@app.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    return render_template("change_password.html", form=form)

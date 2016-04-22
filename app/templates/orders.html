@@ -3,9 +3,32 @@
 
 {% block content %}
 {% include 'flash.html' %}
-    choose the item and push summit~
-    <div class="well">
-    </div>
-    <ul class="pager">
-    </ul>
+choose the item and push summit~
+<form action="" method="post" name="delete">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>time</th>
+            <th>salads</th>
+        </tr>
+        </thead>
+        {% for order in orders %}
+        <tr class="success">
+            <td>{{order.id}}</td>
+            <td>{{order.timestamp}}</td>
+            {% for salad in order.salads %}
+            <td>
+                {% for food in salad.foods %}
+                {{food.name}}
+                {% endfor %}
+            </td>
+            {% endfor %}
+            <!--<td></td>-->
+        </tr>
+        {% endfor %}
+    </table>
+    </p>
+
+</form>
 {% endblock %}

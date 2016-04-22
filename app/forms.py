@@ -20,8 +20,9 @@ class FoodForm(Form):
     price = IntegerField('price', validators=[DataRequired()])
 
 
-class DeleteForm(Form):
+class AddFoodForm(Form):
     remove_id = IntegerField('remove_id')
+
 
 
 class ChangePasswordForm(Form):

@@ -1,10 +1,12 @@
-from flask import render_template, flash, redirect, session, url_for, request, g
+from flask import render_template, flash, redirect, session, url_for, request, g, make_response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from . import db, lm
 from . import app
-from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, DeleteForm
+from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, AddFoodForm
 from .models import User, Food, Salad, Order
 
+
+# food_list = []
 
 @lm.user_loader
 def load_user(id):
@@ -57,18 +59,7 @@ def index():
 @login_required
 def orders():
     user = g.user
-    orders = [
-        {
-            'name': 'Beautiful day in Portland!',
-            'price': '27',
-            'quant': '1'
-        },
-        {
-            'name': 'The Avengers movie was so cool!',
-            'price': '35',
-            'quant': '1'
-        }
-    ]
+    orders = Order.query.filter_by(cos_id=user.id)
     return render_template('orders.html',
                            title='My Orders',
                            user=user,
@@ -183,31 +174,56 @@ def food_add():
 @login_required
 def order_add():
     user = g.user
-    form = DeleteForm()
+    form = AddFoodForm()
 
     foods = Food.query.all()
-    new_order = Order()
-    new_salad = Salad()
+
+    session['food_list'] = []
+
+    new_order = Order(cos_id=user.id)
+    new_salad = Salad(including_order=new_order)
     # new_food = Food()
+    db.session.add(new_order)
+
+
+
 
     if request.method == 'POST':
         # print request.form.values
 
+
         done = request.form.get('over', None)
-        print done
+        # print done
         if done == "7963":
             print 'yes,done=7963'
+            # for f in food_list:
+            #     print f.name
+            # print 'food_list:',food_list
+            # new_salad.foods = food_list
+            print 'add new_salad to db'
+            db.session.add(new_salad)
+            print 'add new_salad to new_order'
             new_order.add_salad(new_salad)
-            user.add_order(new_order)
+            print 'db commit'
+            db.session.commit()
+            # user.add_order(new_order)
             return redirect(url_for('index'))
-        else:
-            return redirect(url_for('order_add'))
+
 
         click_id = request.form.get('add', None)
-        print click_id
+        # print click_id
         food = Food.query.get(click_id)
-        new_salad.add_food(food)
-        print food.name
+        # food1 = Food(name='dsfaef')
+        # print food.name
+        # food_list.append(food)
+        # print len(food_list)
+        resp = make_response('', 204)
+        return resp
+        # db.session.commit()
+        # print 'food_list:', food_list
+        # new_salad.add_food(food)
+        # db.session.commit()
+
 
 
 

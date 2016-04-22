@@ -67,16 +67,16 @@ class Salad(db.Model):
     name = db.Column(db.String(40), index=True)
     name_zh = db.Column(db.String(40))
     price = db.Column(db.Integer, default=0)
-    components = db.relationship('Food', secondary=cuisine, backref='salads', lazy='dynamic')
+    foods = db.relationship('Food', secondary=cuisine)
     description = db.Column(db.String(140))
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
 
     def add_food(self, food):
-        self.components.append(food)
+        self.foods.append(food)
         return self
 
     def del_food(self, food):
-        self.components.remove(food)
+        self.foods.remove(food)
         return self
 
     def including(self, food):
@@ -89,6 +89,7 @@ class Food(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(10), index=True)
     price = db.Column(db.Integer, default=0)
+    salads = db.relationship('Salad', secondary=cuisine)
 
 
     def __unicode__(self):

@@ -178,7 +178,7 @@ def order_add():
 
     foods = Food.query.all()
 
-    session['food_list'] = []
+    # session['food_list'] = []
 
     new_order = Order(cos_id=user.id)
     new_salad = Salad(including_order=new_order)
@@ -217,6 +217,7 @@ def order_add():
         # print food.name
         # food_list.append(food)
         # print len(food_list)
+        # flash('add food success')
         resp = make_response('', 204)
         return resp
         # db.session.commit()

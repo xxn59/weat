@@ -50,7 +50,7 @@ def index():
         }
     ]
     return render_template('index.html',
-                           title='Home',
+                           title='We eat together!',
                            user=user,
                            orders=orders)
 

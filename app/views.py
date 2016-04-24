@@ -169,7 +169,7 @@ def food_add():
                            form=form,
                            foods=foods)
 
-
+food_list= []
 @app.route('/order_add', methods=['GET', 'POST'])
 @login_required
 def order_add():
@@ -180,10 +180,14 @@ def order_add():
 
     # session['food_list'] = []
 
-    new_order = Order(cos_id=user.id)
-    new_salad = Salad(including_order=new_order)
+
+
     # new_food = Food()
+
+    new_order = Order(cos_id=user.id)
     db.session.add(new_order)
+    new_salad = Salad(including_order=new_order)
+    db.session.add(new_salad)
 
 
 
@@ -196,14 +200,17 @@ def order_add():
         # print done
         if done == "7963":
             print 'yes,done=7963'
-            # for f in food_list:
-            #     print f.name
+            for f in food_list:
+                new_salad.foods.append(f)
+                print f.name
             # print 'food_list:',food_list
+
             # new_salad.foods = food_list
+
             print 'add new_salad to db'
-            db.session.add(new_salad)
-            print 'add new_salad to new_order'
-            new_order.add_salad(new_salad)
+
+            # print 'add new_salad to new_order'
+            # new_order.add_salad(new_salad)
             print 'db commit'
             db.session.commit()
             # user.add_order(new_order)
@@ -215,8 +222,8 @@ def order_add():
         food = Food.query.get(click_id)
         # food1 = Food(name='dsfaef')
         # print food.name
-        # food_list.append(food)
-        # print len(food_list)
+        food_list.append(food)
+        print len(food_list)
         # flash('add food success')
         resp = make_response('', 204)
         return resp

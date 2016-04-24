@@ -3,25 +3,28 @@
 
 {% block content %}
 {% include 'flash.html' %}
-choose the item and push summit~
+下面是您的订单：
 <form action="" method="post" name="delete">
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>id</th>
-            <th>time</th>
-            <th>salads</th>
+            <th>序号</th>
+            <th>价格</th>
+            <th>沙拉</th>
         </tr>
         </thead>
         {% for order in orders %}
         <tr class="success">
             <td>{{order.id}}</td>
-            <td>{{order.timestamp}}</td>
+            <td>{{order.price}}</td>
             {% for salad in order.salads %}
             <td>
                 {% for food in salad.foods %}
                 {{food.name}}
                 {% endfor %}
+            </td>
+            <td>
+                <td><button type="submit" name="remove" value="{{salad.id}}" />取消</td>
             </td>
             {% endfor %}
             <!--<td></td>-->

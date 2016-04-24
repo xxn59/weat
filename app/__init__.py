@@ -13,7 +13,7 @@ app = Flask(__name__)
 lm = LoginManager()
 lm.login_view = 'login'
 #oid = OpenID(app, os.path.join(basedir, 'tmp'))
-db = SQLAlchemy()
+db = SQLAlchemy(app)
 #db.init_app(app)
 import views, models
 

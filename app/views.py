@@ -169,7 +169,7 @@ def food_add():
                            form=form,
                            foods=foods)
 
-food_list= []
+food_list = []
 @app.route('/order_add', methods=['GET', 'POST'])
 @login_required
 def order_add():
@@ -184,10 +184,17 @@ def order_add():
 
     # new_food = Food()
 
-    new_order = Order(cos_id=user.id)
-    db.session.add(new_order)
-    new_salad = Salad(including_order=new_order)
-    db.session.add(new_salad)
+    # new_order = Order(cos_id=user.id)
+    # db.session.add(new_order)
+    # new_salad = Salad(including_order=new_order)
+    # db.session.add(new_salad)
+
+    # food_test1 = Food.query.get(1)
+    # food_test2 = Food.query.get(2)
+    # new_salad.foods.append(food_test1)
+    # new_salad.foods.append(food_test2)
+    # for f in new_salad.foods:
+    #     print f.name
 
 
 
@@ -200,31 +207,68 @@ def order_add():
         # print done
         if done == "7963":
             print 'yes,done=7963'
-            for f in food_list:
-                new_salad.foods.append(f)
-                print f.name
-            # print 'food_list:',food_list
 
-            # new_salad.foods = food_list
+            submit_order = Order.query.filter_by(cos_id=user.id, status=1).first()
+            if submit_order is None:
+                flash('no unconfirmed order to submit ')
+                return redirect(url_for('order_add'))
+            submit_salad = Salad.query.filter_by(order_id=submit_order.id, status=1).first()
+            if submit_salad is None:
+                flash('no incomplete salad to submit')
+                return redirect(url_for('order_add'))
 
-            print 'add new_salad to db'
+            for f in submit_salad.foods:
+                submit_salad.price = submit_salad.price + f.price
+            for s in submit_order.salads:
+                submit_order.price = submit_order.price + s.price
 
-            # print 'add new_salad to new_order'
-            # new_order.add_salad(new_salad)
+            submit_order.status = 2
+            submit_salad.status = 2
+
             print 'db commit'
             db.session.commit()
             # user.add_order(new_order)
-            return redirect(url_for('index'))
+            return redirect(url_for('orders'))
 
 
         click_id = request.form.get('add', None)
-        # print click_id
-        food = Food.query.get(click_id)
-        # food1 = Food(name='dsfaef')
-        # print food.name
-        food_list.append(food)
-        print len(food_list)
-        # flash('add food success')
+        if click_id is None:
+            print 'no click'
+
+        else:
+            print 'click_id:', click_id
+            new_order = Order.query.filter_by(cos_id=user.id, status=1).first()
+            if new_order is None:
+                new_order = Order(cos_id=user.id, status=1)
+                db.session.add(new_order)
+                print 'added new order'
+
+            new_salad = Salad.query.filter_by(order_id=new_order.id, status=1).first()
+            if new_salad is None:
+                new_salad = Salad(order_id=new_order.id, status=1)
+                db.session.add(new_salad)
+                print 'added new salad'
+            else:
+                print 'continue last salad'
+            food = Food.query.get(click_id)
+            new_salad.foods.append(food)
+            # food_list.append(food)
+            # food_test1 = Food.query.get(1)
+            # food_test2 = Food.query.get(2)
+            # new_salad.foods.append(food_test1)
+            # new_salad.foods.append(food_test2)
+            print 'foods in new_salad:'
+            for f in new_salad.foods:
+
+                print f.name
+            # for f in food_list:
+            #     print 'foods in food_list:', f.name
+            db.session.commit()
+            # food1 = Food(name='dsfaef')
+            # print food.name
+            # food_list.append(food)
+            # print len(food_list)
+            # flash('add food success')
         resp = make_response('', 204)
         return resp
         # db.session.commit()

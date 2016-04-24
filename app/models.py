@@ -42,6 +42,8 @@ class User(db.Model):
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime)
+    status = db.Column(db.Integer, default=1)
+    price = db.Column(db.Integer, default=0)
     cos_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     salads = db.relationship('Salad', backref='including_order', lazy='dynamic')
 
@@ -68,6 +70,7 @@ class Salad(db.Model):
     name_zh = db.Column(db.String(40))
     price = db.Column(db.Integer, default=0)
     foods = db.relationship('Food', secondary=cuisine)
+    status = db.Column(db.Integer, default=1)
     description = db.Column(db.String(140))
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
 

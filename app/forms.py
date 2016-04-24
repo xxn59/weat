@@ -17,7 +17,7 @@ class SignupForm(Form):
 
 class FoodForm(Form):
     name = StringField('name', validators=[DataRequired()])
-    price = IntegerField('price', validators=[DataRequired()])
+    price = IntegerField('price')
 
 
 class AddFoodForm(Form):

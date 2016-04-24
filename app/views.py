@@ -59,11 +59,18 @@ def index():
 @login_required
 def orders():
     user = g.user
-    orders = Order.query.filter_by(cos_id=user.id)
-    return render_template('orders.html',
-                           title='My Orders',
-                           user=user,
-                           orders=orders)
+    if user.nickname == "simon":
+        orders = Order.query.all()
+        return render_template('orders_all.html',
+                               title='All Orders',
+                               user=user,
+                               orders=orders)
+    else:
+        orders = Order.query.filter_by(cos_id=user.id)
+        return render_template('orders.html',
+                               title='My Orders',
+                               user=user,
+                               orders=orders)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -71,17 +78,17 @@ def signup():
     form1 = SignupForm()
     if form1.validate_on_submit():
         # session['remember_me'] = form.remember_me.data
-        print 'on submit'
-        print 'form.nickname:', form1.nickname
+        # print 'on submit'
+        # print 'form.nickname:', form1.nickname
         user = User.query.filter_by(nickname=form1.nickname.data).first()
         if user is None:
-            print 'new nickname,adding to db'
+            # print 'new nickname,adding to db'
             user = User(nickname=form1.nickname.data, floor=form1.floor.data)
             db.session.add(user)
             db.session.commit()
             return redirect(request.args.get('next') or url_for('index'))
         else:
-            print 'nickname exist:', user.nickname
+            # print 'nickname exist:', user.nickname
             flash('User exists.' % form1.nickname.data)
             # return redirect(request.args.get('next') or url_for('index'))
 
@@ -95,17 +102,17 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if g.user is not None and g.user.is_authenticated:
-        print 'user valid:', g.user
+        # print 'user valid:', g.user
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         session['remember_me'] = form.remember_me.data
-        print 'on submit'
+        # print 'on submit'
         # print 'form.nickname:',form.nickname
         user = User.query.filter_by(nickname=form.nickname.data).first()
-        print 'filtering nickname'
+        # print 'filtering nickname'
         if user is None:
-            print 'nickname none'
+            # print 'nickname none'
             flash('The nickname is not registered.')
             # return redirect(url_for('signup'))
             # user = User(nickname=form.nickname.data, floor=form.floor.data)
@@ -113,7 +120,11 @@ def login():
             # db.session.commit()
             # return redirect(url_for('signup'))
         else:
-            print 'nickname exist:', user.nickname
+            if user.is_admin():
+                pass
+                # flash('please enter the PASSWORD')
+                # return redirect(url_for('login_admin'))
+            # print 'nickname exist:', user.nickname
             login_user(user, remember=session['remember_me'])
             return redirect(request.args.get('next') or url_for('index'))
 
@@ -123,6 +134,12 @@ def login():
                            title='Sign In',
                            form=form)
 
+@app.route('/login_admin', methods=['GET', 'POST'])
+def login_admin():
+    form = LoginForm()
+    return render_template('login_admin.html',
+                           title='Sign In',
+                           form=form)
 
 @app.route('/logout')
 def logout():
@@ -136,10 +153,10 @@ def logout():
 def user(nickname, page=1):
     user = User.query.filter_by(nickname=nickname).first()
     if user is None:
-        print 'user is none in /user/profile'
+        # print 'user is none in /user/profile'
         flash('User %s not found.' % nickname)
         return redirect(url_for('index'))
-    print 'user:', user.nickname
+    # print 'user:', user.nickname
     return render_template('user.html',
                            user=user)
 
@@ -147,12 +164,15 @@ def user(nickname, page=1):
 @app.route('/food_add', methods=['GET', 'POST'])
 @login_required
 def food_add():
+    user = g.user
+    if user.lever < 3:
+        return redirect(url_for('index'))
     form = FoodForm()
 
     foods = Food.query.all()
 
     if form.validate_on_submit():
-        print 'food add commit'
+        # print 'food add commit'
         food = Food.query.filter_by(name=form.name.data).first()
         if food is None:
             food = Food(name=form.name.data, price=form.price.data)
@@ -162,7 +182,7 @@ def food_add():
             # print 'food added:', food.name
             return redirect(url_for('food_add'))
         else:
-            print 'food exists:', food.name
+            # print 'food exists:', food.name
             flash('this food is already included.')
     return render_template('food_add.html',
                            title='Add new food',
@@ -175,29 +195,7 @@ food_list = []
 def order_add():
     user = g.user
     form = AddFoodForm()
-
     foods = Food.query.all()
-
-    # session['food_list'] = []
-
-
-
-    # new_food = Food()
-
-    # new_order = Order(cos_id=user.id)
-    # db.session.add(new_order)
-    # new_salad = Salad(including_order=new_order)
-    # db.session.add(new_salad)
-
-    # food_test1 = Food.query.get(1)
-    # food_test2 = Food.query.get(2)
-    # new_salad.foods.append(food_test1)
-    # new_salad.foods.append(food_test2)
-    # for f in new_salad.foods:
-    #     print f.name
-
-
-
 
     if request.method == 'POST':
         # print request.form.values
@@ -206,7 +204,7 @@ def order_add():
         done = request.form.get('over', None)
         # print done
         if done == "7963":
-            print 'yes,done=7963'
+            # print 'yes,done=7963'
 
             submit_order = Order.query.filter_by(cos_id=user.id, status=1).first()
             if submit_order is None:
@@ -225,7 +223,7 @@ def order_add():
             submit_order.status = 2
             submit_salad.status = 2
 
-            print 'db commit'
+            # print 'db commit'
             db.session.commit()
             # user.add_order(new_order)
             return redirect(url_for('orders'))
@@ -233,23 +231,25 @@ def order_add():
 
         click_id = request.form.get('add', None)
         if click_id is None:
-            print 'no click'
+            # print 'no click'
+            pass
 
         else:
-            print 'click_id:', click_id
+            # print 'click_id:', click_id
             new_order = Order.query.filter_by(cos_id=user.id, status=1).first()
             if new_order is None:
                 new_order = Order(cos_id=user.id, status=1)
                 db.session.add(new_order)
-                print 'added new order'
+                # print 'added new order'
 
             new_salad = Salad.query.filter_by(order_id=new_order.id, status=1).first()
             if new_salad is None:
                 new_salad = Salad(order_id=new_order.id, status=1)
                 db.session.add(new_salad)
-                print 'added new salad'
+                # print 'added new salad'
             else:
-                print 'continue last salad'
+                pass
+                # print 'continue last salad'
             food = Food.query.get(click_id)
             new_salad.foods.append(food)
             # food_list.append(food)
@@ -257,10 +257,11 @@ def order_add():
             # food_test2 = Food.query.get(2)
             # new_salad.foods.append(food_test1)
             # new_salad.foods.append(food_test2)
-            print 'foods in new_salad:'
+            # print 'foods in new_salad:'
             for f in new_salad.foods:
+                pass
 
-                print f.name
+                # print f.name
             # for f in food_list:
             #     print 'foods in food_list:', f.name
             db.session.commit()

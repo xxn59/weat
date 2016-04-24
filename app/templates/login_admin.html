@@ -1,0 +1,23 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+    {% include 'flash.html' %}
+    <h2>Sign in</h2>
+    <form action="" method="post" name="login">
+        {{ form.hidden_tag() }}
+        <p>
+            nickname:<br>
+            {{ form.nickname(size=20) }}
+            {% for error in form.nickname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}<br>
+            password:<br>
+            {{ form.password }}
+        </p>
+        <p>{{ form.remember_me }} Remember Me</p>
+        <p><input type="submit" value="Sign In"></p>
+    <h2>Fresh in here?</h2>
+    <a href="{{ url_for('signup') }}"><h3>Sign up for Weat!</h3></a>
+    </form>
+{% endblock %}

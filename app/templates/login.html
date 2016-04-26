@@ -2,22 +2,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% include 'flash.html' %}
-    <h2>输入昵称即可登录</h2>
-    <form action="" method="post" name="login">
-        {{ form.hidden_tag() }}
-        <p>
-            nickname:<br>
-            {{ form.nickname(size=30) }}
-            <input type="submit" value="Sign In" size="30">
-            {% for error in form.nickname.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}<br>
-            {{ form.remember_me }} Remember Me
-        </p>
+{% include 'flash.html' %}
+<h2>输入昵称即可登录</h2>
+<div class="well">
+<form action="" method="post" name="login">
+    {{ form.hidden_tag() }}
+    <p>
+        nickname:<br>
+        {{ form.nickname(size=30) }}
+        <input type="submit" value="Sign In" size="30">
+        {% for error in form.nickname.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+        {{ form.remember_me }} Remember Me
+    </p>
+</form>
+</div>
+<p></p>
+<h2>第一次来吗？</h2>
+<a href="{{ url_for('signup') }}"><h3>Sign up for Weat!</h3></a>
 
-        <p></p>
-    <h2>第一次来吗？</h2>
-    <a href="{{ url_for('signup') }}"><h3>Sign up for Weat!</h3></a>
-    </form>
 {% endblock %}

@@ -25,6 +25,9 @@ class User(db.Model):
     def is_admin(self):
         return self.level == 3
 
+    def is_provider(self):
+        return self.level == 4
+
     def get_id(self):
         try:
             return unicode(self.id)  # python 2

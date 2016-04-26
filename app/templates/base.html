@@ -11,15 +11,11 @@
     <!--<link href="/static/css/bootstrap-theme.min.css" rel="stylesheet">-->
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/moment.min.js"></script>
     <script src="/static/js/jquery.min.js"></script>
-    <script type=text/javascript>
-        var $SCRIPT_ROOT = {{request.script_root|tojson|safe}};
-
-
-
-
-
-    </script>
+    <!--<script type=text/javascript>-->
+        <!--var $SCRIPT_ROOT = {{request.script_root|tojson|safe}};-->
+    <!--</script>-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -33,26 +29,26 @@
                 <span class="icon-bar"></span>
             </a>
             <a class="brand" href="/"><b>Weat</b></a>
-            <ul class="nav">
+            <ul class="nav navbar-nav">
 
                 {% if g.user.is_authenticated %}
+                <li><a href="{{ url_for('order_add') }}">新建订单</a></li>
                 <li><a href="{{ url_for('user', nickname=g.user.nickname) }}">我的信息</a></li>
 
-                <li><a href="{{ url_for('logout') }}">注销</a></li>
+
                 {% endif %}
             </ul>
 
             <div class="nav-collapse in collapse" style="height: auto;">
-
-
             </div>
 
             <div class="nav-collapse">
                 <ul class="nav">
                     {% if g.user.is_authenticated %}
                     <li><a href="{{ url_for('orders') }}">订单们</a></li>
-                    <li><a href="{{ url_for('order_add') }}">新建订单</a></li>
+
                     <li><a href="{{ url_for('food_add') }}">Add food</a></li>
+                    <li><a href="{{ url_for('logout') }}">注销</a></li>
                     <!--<li><a href="{{ url_for('food_add') }}">Add food</a></li>-->
                     {% endif %}
                 </ul>

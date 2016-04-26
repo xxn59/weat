@@ -4,18 +4,17 @@
 {% block content %}
 {% include 'flash.html' %}
 下面是您的订单：
-<form action="" method="post" name="delete">
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>序号</th>
+            <th>时间</th>
             <th>价格</th>
             <th>沙拉</th>
         </tr>
         </thead>
         {% for order in orders %}
         <tr class="success">
-            <td>{{order.id}}</td>
+            <td>{{momentjs(order.timestamp).fromNow()}}</td>
             <td>{{order.price}}</td>
             {% for salad in order.salads %}
             <td>
@@ -24,7 +23,7 @@
                 {% endfor %}
             </td>
             <td>
-                <td><button type="submit" name="remove" value="{{salad.id}}" />取消</td>
+                <button type="submit" name="remove" value="{{order.id}}" onclick="javaScript:confirm('您确定要删除吗？')"/>取消
             </td>
             {% endfor %}
             <!--<td></td>-->
@@ -32,6 +31,4 @@
         {% endfor %}
     </table>
     </p>
-
-</form>
 {% endblock %}

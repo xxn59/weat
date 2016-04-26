@@ -3,6 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from . import db, lm
 from . import app
 from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, AddFoodForm
+from datetime import datetime, date, time
 from .models import User, Food, Salad, Order
 
 
@@ -53,24 +54,6 @@ def index():
                            title='We eat together!',
                            user=user,
                            orders=orders)
-
-
-@app.route('/orders', methods=['GET', 'POST'])
-@login_required
-def orders():
-    user = g.user
-    if user.nickname == "simon":
-        orders = Order.query.all()
-        return render_template('orders_all.html',
-                               title='All Orders',
-                               user=user,
-                               orders=orders)
-    else:
-        orders = Order.query.filter_by(cos_id=user.id)
-        return render_template('orders.html',
-                               title='My Orders',
-                               user=user,
-                               orders=orders)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -134,12 +117,14 @@ def login():
                            title='Sign In',
                            form=form)
 
+
 @app.route('/login_admin', methods=['GET', 'POST'])
 def login_admin():
     form = LoginForm()
     return render_template('login_admin.html',
                            title='Sign In',
                            form=form)
+
 
 @app.route('/logout')
 def logout():
@@ -189,7 +174,10 @@ def food_add():
                            form=form,
                            foods=foods)
 
+
 food_list = []
+
+
 @app.route('/order_add', methods=['GET', 'POST'])
 @login_required
 def order_add():
@@ -223,11 +211,12 @@ def order_add():
             submit_order.status = 2
             submit_salad.status = 2
 
+            submit_order.timestamp = datetime.utcnow()
+
             # print 'db commit'
             db.session.commit()
             # user.add_order(new_order)
             return redirect(url_for('orders'))
-
 
         click_id = request.form.get('add', None)
         if click_id is None:
@@ -277,9 +266,6 @@ def order_add():
         # new_salad.add_food(food)
         # db.session.commit()
 
-
-
-
     if form.validate_on_submit():
         print 'here'
         # if form.remove_id.data is not None and form.remove_id.data != 9999:
@@ -298,13 +284,45 @@ def order_add():
                            foods=foods)
 
 
-# @app.route('/foods', methods=['GET', 'POST'])
-# @login_required
-# def foods():
-#     foods = Food.query.all()
-#     return render_template('foods.html',
-#                            title='foods',
-#                            foods=foods)
+@app.route('/orders', methods=['GET', 'POST'])
+@login_required
+def orders():
+    user = g.user
+    if user.nickname == "simon":
+        orders = Order.query.all()
+        return render_template('orders_all.html',
+                               title='All Orders',
+                               user=user,
+                               orders=orders)
+    else:
+        dateNow = datetime.utcnow().date()
+        timeNow = datetime.utcnow().time()
+        dinner_begin = time(4, 0)
+        dinner_end = time(19, 0)
+        print dateNow, timeNow
+        if timeNow > dinner_begin and timeNow < dinner_end:  # after 12:00
+            print 'dinner time'
+        else:
+            print 'lunch time'
+
+        orders = Order.query.filter_by(cos_id=user.id)
+        if request.method == 'POST':
+            btn = request.form.get('remove', None)
+            if btn is not None:
+                print btn
+                del_order = Order.query.get(btn)
+                print del_order.cos_id
+                user.del_order(del_order)
+                # db.session.remove(del_order)
+                db.session.commit()
+                return redirect(url_for('orders'))
+            else:
+                print 'btn is none'
+        return render_template('orders.html',
+                               title='My Orders',
+                               user=user,
+                               orders=orders)
+
 
 @app.route('/change-password', methods=['GET', 'POST'])
 @login_required

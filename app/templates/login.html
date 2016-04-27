@@ -10,11 +10,10 @@
     <p>
         nickname:<br>
         {{ form.nickname(size=30) }}
-        <input type="submit" value="Sign In" size="30">
         {% for error in form.nickname.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}<br>
-        {{ form.remember_me }} Remember Me
+        <input type="submit" value="Sign In" size="30">{{ form.remember_me }} Remember Me
     </p>
 </form>
 </div>

@@ -3,7 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from . import db, lm
 from . import app
 from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, AddFoodForm
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 from .models import User, Food, Salad, Order
 
 
@@ -193,7 +193,10 @@ def order_add():
         # print done
         if done == "7963":
             # print 'yes,done=7963'
-
+            meal = request.form.get('meal',None)
+            if meal is None:
+                flash('please choose which meal you want to order')
+                return redirect(url_for('order_add'))
             submit_order = Order.query.filter_by(cos_id=user.id, status=1).first()
             if submit_order is None:
                 flash('no unconfirmed order to submit ')
@@ -289,21 +292,25 @@ def order_add():
 def orders():
     user = g.user
     if user.nickname == "simon":
-        orders = Order.query.all()
-        return render_template('orders_all.html',
-                               title='All Orders',
-                               user=user,
-                               orders=orders)
-    else:
         dateNow = datetime.utcnow().date()
         timeNow = datetime.utcnow().time()
         dinner_begin = time(4, 0)
         dinner_end = time(19, 0)
-        print dateNow, timeNow
-        if timeNow > dinner_begin and timeNow < dinner_end:  # after 12:00
-            print 'dinner time'
-        else:
-            print 'lunch time'
+        query_begin = datetime.combine(dateNow, dinner_begin) - timedelta(days=1)
+        query_end = datetime.combine(dateNow, dinner_end)
+        orders = Order.query.all()
+        orders_noon = Order.query.filter(Order.timestamp.between(query_begin, query_end))
+        return render_template('orders_all.html',
+                               title='All Orders',
+                               user=user,
+                               orders=orders_noon)
+    else:
+
+        # print dateNow, timeNow
+        # if timeNow > dinner_begin and timeNow < dinner_end:  # after 12:00
+        #     print 'dinner time'
+        # else:
+        #     print 'lunch time'
 
         orders = Order.query.filter_by(cos_id=user.id)
         if request.method == 'POST':

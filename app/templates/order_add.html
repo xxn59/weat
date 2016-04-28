@@ -4,28 +4,33 @@
 {% block content %}
 {% include 'flash.html' %}
 <h3>Add new order</h3>
+自选沙拉的标准组合：<br>
+1份底菜 + 3种素类 + 2种肉类 = 25元~
 <form action="" method="post" name="order_add">
     <table class="table table-condensed table-hover">
-    <thead>
-    <tr>
-        <th>id</th>
-        <th>name</th>
-        <th>price</th>
-    </tr>
-    </thead>
-    {% for food in foods %}
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>price</th>
+        </tr>
+        </thead>
+        {% for food in foods %}
         <tr class="success">
             <td>{{food.id}}</td>
             <td>{{food.name}}</td>
             <td>{{food.price}}</td>
-            <td><button type="submit" name="add" value="{{food.id}}" />到碗里来</td>
-            <td></td>
+            <td>
+                <button type="submit" name="add" value="{{food.id}}"/>
+                到碗里来
+            </td>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </table>
+    <input type="radio" name="meal" value="lunch"/> 午餐 | lunch
+    <input type="radio" name="meal" value="dinner"/> 晚餐 | dinner<br>
     </p>
-    <input type="radio" name="meal" value="lunch" /> lunch
-    <input type="radio" name="meal" value="dinner" /> dinner
-    <button type="submit" name="over" value="7963" />我选好了！
+    <button type="submit" name="over" value="7963"/>
+    我选好了！
 </form>
 {% endblock %}

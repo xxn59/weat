@@ -4,14 +4,13 @@
 {% block content %}
 {% include 'flash.html' %}
 <h3>Sign up for Weat!</h3>
+<div class="well">
 <form action="" method="post" name="signup">
     {{ form.hidden_tag() }}
     <p>
-        group code:<br>
-        {{ form.group_code(size=8) }}
-        {% for error in form.group_code.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
+        group :<br>
+        {{ form.group }}
+        <br>
         nickname:<br>
         {{ form.nickname(size=20) }}
         {% for error in form.nickname.errors %}
@@ -25,4 +24,5 @@
     </p>
     <p><input type="submit" value="Sign Up!"></p>
 </form>
+    </div>
 {% endblock %}

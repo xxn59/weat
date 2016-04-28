@@ -18,6 +18,8 @@
         {% for error in form.name.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}<br>
+        food category:<br>
+        {{ form.cat }}<br>
         price:<br>
         {{ form.price }}
         {% for error in form.price.errors %}
@@ -27,6 +29,7 @@
     <p><input type="submit" value="Add"></p>
     <p>
 </form>
+Currently existing foods:
 <form action="" method="post" name="delete">
     <table class="table table-hover">
     <thead>
@@ -34,6 +37,7 @@
         <th>id</th>
         <th>name</th>
         <th>price</th>
+        <th>category</th>
     </tr>
     </thead>
     {% for food in foods %}
@@ -41,8 +45,8 @@
             <td>{{food.id}}</td>
             <td>{{food.name}}</td>
             <td>{{food.price}}</td>
+            <td>{{food.cat}}</td>
             <td><button type="submit" value={{food.id}} />Delete</td>
-            <td></td>
         </tr>
     {% endfor %}
     </table>

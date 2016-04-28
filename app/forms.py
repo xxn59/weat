@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, IntegerField, SubmitField, PasswordField
+from wtforms import StringField, BooleanField, IntegerField, SubmitField, PasswordField, SelectField
 from wtforms.validators import DataRequired, Length, Required, EqualTo
 
 
@@ -11,7 +11,7 @@ class LoginForm(Form):
 
 
 class SignupForm(Form):
-    group_code = StringField('group_code', validators=[Length(min=4, max=10)])
+    group = SelectField(choices=[('dji', 'DJI skyworth'), ('other', 'Other')])
     nickname = StringField('nickname', validators=[DataRequired()])
     floor = IntegerField('floor', validators=[DataRequired()])
 
@@ -19,6 +19,7 @@ class SignupForm(Form):
 class FoodForm(Form):
     name = StringField('name', validators=[DataRequired()])
     price = IntegerField('price')
+    cat = SelectField()
 
 
 class AddFoodForm(Form):

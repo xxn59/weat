@@ -58,28 +58,28 @@ def index():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    form1 = SignupForm()
-    if form1.validate_on_submit():
+    form = SignupForm()
+    if form.validate_on_submit():
         # session['remember_me'] = form.remember_me.data
         # print 'on submit'
         # print 'form.nickname:', form1.nickname
-        user = User.query.filter_by(nickname=form1.nickname.data).first()
+        user = User.query.filter_by(nickname=form.nickname.data).first()
         if user is None:
             # print 'new nickname,adding to db'
-            user = User(nickname=form1.nickname.data, floor=form1.floor.data)
+            user = User(nickname=form.nickname.data, floor=form.floor.data, group=form.group.data)
             db.session.add(user)
             db.session.commit()
             return redirect(request.args.get('next') or url_for('index'))
         else:
             # print 'nickname exist:', user.nickname
-            flash('User exists.' % form1.nickname.data)
+            flash('User exists.' % form.nickname.data)
             # return redirect(request.args.get('next') or url_for('index'))
 
             # remember_me = False
             # return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
     return render_template('signup.html',
                            title='Sign Up for Weat!',
-                           form=form1)
+                           form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -145,14 +145,15 @@ def user(nickname, page=1):
     return render_template('user.html',
                            user=user)
 
-
+from models import food_category
 @app.route('/food_add', methods=['GET', 'POST'])
 @login_required
 def food_add():
     user = g.user
-    if user.lever < 3:
+    if user.level < 3:
         return redirect(url_for('index'))
     form = FoodForm()
+    form.cat.choices = [(f, f) for f in food_category]
 
     foods = Food.query.all()
 
@@ -160,7 +161,7 @@ def food_add():
         # print 'food add commit'
         food = Food.query.filter_by(name=form.name.data).first()
         if food is None:
-            food = Food(name=form.name.data, price=form.price.data)
+            food = Food(name=form.name.data, price=form.price.data, cat=form.cat.data)
             db.session.add(food)
             db.session.commit()
             flash('add food %s succeed!' % food.name)
@@ -174,8 +175,6 @@ def food_add():
                            form=form,
                            foods=foods)
 
-
-food_list = []
 
 
 @app.route('/order_add', methods=['GET', 'POST'])
@@ -193,7 +192,7 @@ def order_add():
         # print done
         if done == "7963":
             # print 'yes,done=7963'
-            meal = request.form.get('meal',None)
+            meal = request.form.get('meal', None)
             if meal is None:
                 flash('please choose which meal you want to order')
                 return redirect(url_for('order_add'))
@@ -213,7 +212,7 @@ def order_add():
 
             submit_order.status = 2
             submit_salad.status = 2
-
+            submit_order.meal = meal
             submit_order.timestamp = datetime.utcnow()
 
             # print 'db commit'
@@ -291,7 +290,7 @@ def order_add():
 @login_required
 def orders():
     user = g.user
-    if user.nickname == "simon":
+    if user.level >= 3:
         dateNow = datetime.utcnow().date()
         timeNow = datetime.utcnow().time()
         dinner_begin = time(4, 0)

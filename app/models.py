@@ -1,4 +1,5 @@
 from . import db
+from sqlalchemy.types import Enum
 
 
 class User(db.Model):
@@ -9,6 +10,7 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     orders = db.relationship('Order', backref='customer', lazy='dynamic')
     level = db.Column(db.Integer, db.ForeignKey('userlevel.level_num'))
+    group = db.Column(db.String(20))
 
     @property
     def is_authenticated(self):
@@ -52,6 +54,7 @@ class Userlevel(db.Model):
     user = db.relationship('User', backref='clearance', lazy='dynamic')
 
 
+meals = ('breakfast', 'lunch', 'dinner')
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime)
@@ -59,6 +62,7 @@ class Order(db.Model):
     price = db.Column(db.Integer, default=0)
     cos_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     salads = db.relationship('Salad', backref='including_order', lazy='dynamic')
+    meal = db.Column(db.Enum, Enum(*meals))
 
     def add_salad(self, salad):
         self.salads.append(salad)
@@ -101,10 +105,12 @@ class Salad(db.Model):
     def __repr__(self):
         return '<Post %r>' % (self.body)
 
+food_category = ('vegetable', 'meat', 'sauce', 'premium', 'new_arrival')
 class Food(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(10), index=True)
     price = db.Column(db.Integer, default=0)
+    cat = db.Column(db.Enum, Enum(*food_category))
     salads = db.relationship('Salad', secondary=cuisine)
 
 

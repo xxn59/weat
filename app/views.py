@@ -335,3 +335,8 @@ def orders():
 def change_password():
     form = ChangePasswordForm()
     return render_template("change_password.html", form=form)
+
+
+@app.route('/pay', methods=['GET', 'POST'])
+def pay():
+    return render_template("pay_test.html")

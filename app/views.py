@@ -340,3 +340,7 @@ def change_password():
 @app.route('/pay', methods=['GET', 'POST'])
 def pay():
     return render_template("pay_test.html")
+
+@app.route('/about_me', methods=['GET', 'POST'])
+def about_me():
+    return render_template("about_me.html")

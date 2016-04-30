@@ -5,6 +5,8 @@
     {% include 'flash.html' %}
     <div class="well well-large" style="height: 140px;">
         <div class="pull-right">
+            <a href="{{ url_for('user_edit') }}">修改资料</a>&nbsp &nbsp
+            <a href="{{ url_for('user_edit') }}">修改密码</a>
         </div>
         <h2>{{ user.nickname }}</h2>
             floor:{{ user.floor }}<br>

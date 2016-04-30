@@ -13,6 +13,9 @@ class LoginForm(Form):
 class SignupForm(Form):
     group = SelectField(choices=[('dji', 'DJI skyworth'), ('other', 'Other')])
     nickname = StringField('nickname', validators=[DataRequired()])
+    password = PasswordField('New password', validators=[
+        Required(), EqualTo('password2', message='Passwords must match')])
+    password2 = PasswordField('Confirm new password', validators=[Required()])
     floor = IntegerField('floor', validators=[DataRequired()])
 
 
@@ -33,3 +36,9 @@ class ChangePasswordForm(Form):
         Required(), EqualTo('password2', message='Passwords must match')])
     password2 = PasswordField('Confirm new password', validators=[Required()])
     submit = SubmitField('Update Password', default=9999)
+
+class EditForm(Form):
+    group = SelectField(choices=[('dji', 'DJI skyworth'), ('other', 'Other')])
+    # nickname = StringField('nickname', validators=[DataRequired()])
+    floor = IntegerField('floor', validators=[DataRequired()])
+    submit = SubmitField('submit')

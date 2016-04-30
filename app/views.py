@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from . import db, lm
 from . import app
-from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, AddFoodForm
+from .forms import LoginForm, SignupForm, FoodForm, ChangePasswordForm, AddFoodForm, EditForm
 from datetime import datetime, date, time, timedelta
 from .models import User, Food, Salad, Order
 
@@ -336,6 +336,18 @@ def change_password():
     form = ChangePasswordForm()
     return render_template("change_password.html", form=form)
 
+@app.route('/user_edit', methods=['GET', 'POST'])
+@login_required
+def user_edit():
+    user = g.user
+    form = EditForm()
+    form.floor.data = user.floor
+    form.group.data = user.group
+    if form.validate_on_submit():
+        user.floor = form.floor.data
+        user.group = form.group.data
+        return redirect(url_for('user'))
+    return render_template("user_edit.html", user=user, form=form)
 
 @app.route('/pay', methods=['GET', 'POST'])
 def pay():

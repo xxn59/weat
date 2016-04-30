@@ -1,0 +1,29 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="well well-large" style="height: 180px;">
+    <form action="" method="post" name="user_edit">
+        {{ form.hidden_tag() }}
+        <p>
+
+
+        <h2>{{ user.nickname }}</h2>
+        <div class="pull-right">
+            <button type="submit" value="submit" style="width:80px;height:40px;">提交</button>
+        </div>
+        团伙:<br>
+        {{ form.group }}
+        {% for error in form.group.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+        楼层:<br>
+        {{ form.floor }}
+        {% for error in form.floor.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+        </p>
+    </form>
+</div>
+{% endblock %}

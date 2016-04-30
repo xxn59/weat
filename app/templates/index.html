@@ -4,9 +4,7 @@
 {% block content %}
 
 {% include 'flash.html' %}
-<div class="well">
-    <h3>Hi, {{ g.user.nickname }}! 今天吃点啥？</h3>
-</div>
+<h3>Hi, {{ g.user.nickname }}! 今天吃点啥？</h3>
 <a href="/order_add">
     <div class="well">
         <center><h3>点这里 来份沙拉</h3></center>
@@ -20,8 +18,6 @@
 </a>
 <ul class="pager">
 </ul>
-<a href="/about_me">
-    about me | 关于我
-    </a>
+
 
 {% endblock %}

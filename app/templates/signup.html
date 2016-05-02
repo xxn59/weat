@@ -5,24 +5,39 @@
 {% include 'flash.html' %}
 <h3>Sign up for Weat!</h3>
 <div class="well">
-<form action="" method="post" name="signup">
-    {{ form.hidden_tag() }}
-    <p>
-        group :<br>
-        {{ form.group }}
-        <br>
-        nickname:<br>
-        {{ form.nickname(size=20) }}
-        {% for error in form.nickname.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
-        floor:<br>
-        {{ form.floor}}
-        {% for error in form.floor.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
-    </p>
-    <p><input type="submit" value="Sign Up!"></p>
-</form>
-    </div>
+    <form action="" method="post" name="signup">
+        {{ form.hidden_tag() }}
+        <p>
+            <b>昵称|nickname:</b>（最好与<b>微信昵称</b>一致,方便商家结算）<br>
+            <font color="red">*</font>{{ form.nickname(size=20) }}
+            {% for error in form.nickname.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}<br>
+            <b>密码|password:</b>（<b>不是</b>微信密码哦，是点餐的独立密码）<br>
+            <font color="red">*</font>{{ form.password }}
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}<br>
+            <b>再次输入密码|re-enter password:</b><br>
+            <font color="red">*</font>{{ form.password2 }}
+            {% for error in form.password2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}<br>
+            <b>团伙|group :</b>（默认就好啦）<br>
+            <font color="red">*</font>{{ form.group }}
+            <br>
+            <b>楼层|floor:</b><br>
+            <font color="red">*</font>{{ form.floor}}
+            {% for error in form.floor.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}<br>
+            <b>内心|gender:</b><br>
+            {{ form.gender}}
+        </p>
+        <div class="pull-right">
+            带<font color="red">*</font>的为必填
+        </div>
+        <p><input type="submit" value="Sign Up!"></p>
+    </form>
+</div>
 {% endblock %}

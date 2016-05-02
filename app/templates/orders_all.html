@@ -14,7 +14,7 @@
             <th>沙拉</th>
         </tr>
         </thead>
-        {% for order in orders %}
+        {% for order in orders_lunch %}
         <tr class="success">
             <td>{{order.timestamp}}</td>
             <td>{{order.customer.nickname}}</td>
@@ -46,7 +46,7 @@
             <th>沙拉</th>
         </tr>
         </thead>
-        {% for order in orders %}
+        {% for order in orders_dinner %}
         <tr class="success">
             <td>{{order.timestamp}}</td>
             <td>{{order.customer.nickname}}</td>

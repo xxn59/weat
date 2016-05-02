@@ -11,12 +11,42 @@
     </div>
 </a>
 
-<a href="/pay">
-    <div class="well">
-        <center><h3>测试：Pay Me!</h3></center>
+<!--<a href="/pay">-->
+    <!--<div class="well">-->
+        <!--<center><h3>测试：Pay Me!</h3></center>-->
+    <!--</div>-->
+<!--</a>-->
+<h3>瞅瞅伙伴们都点了啥 -_-↓</h3>
+{% for order in orders %}
+{% for salad in order.salads %}
+<div class="well">
+    <font size="5"><b>
+    {{ order.customer.nickname }}</b> </font>刚点了一份沙拉:
+    <div class="pull-right">
+        <button class="submit" name="copy" value={{salad.id}} />我也来一份</td>
     </div>
-</a>
+    <br>
+    <br>
+
+    {% for food in salad.foods %}
+    {{ food.name }}
+    {% endfor %}
+
+
+</div>
+{% endfor %}
+{% endfor %}
 <ul class="pager">
+    <!--{% if orders.has_prev %}-->
+    <!--<li class="previous"><a href="{{ url_for('index', page=orders.prev_num) }}">Newer orders</a></li>-->
+    <!--{% else %}-->
+    <!--<li class="previous disabled"><a href="#">Newer orders</a></li>-->
+    <!--{% endif %}-->
+    <!--{% if orders.has_next %}-->
+    <!--<li class="next"><a href="{{ url_for('index', page=orders.next_num) }}">Older orders</a></li>-->
+    <!--{% else %}-->
+    <!--<li class="next disabled"><a href="#">Older orders</a></li>-->
+    <!--{% endif %}-->
 </ul>
 
 

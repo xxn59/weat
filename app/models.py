@@ -1,6 +1,15 @@
 from . import db
 from sqlalchemy.types import Enum
 
+cuisine = db.Table('cuisine',
+                   db.Column('salad_id', db.Integer, db.ForeignKey('salad.id')),
+                   db.Column('food_id', db.Integer, db.ForeignKey('food.id'))
+                   )
+
+salad_order_table = db.Table('salad_order_table',
+                   db.Column('salad_id', db.Integer, db.ForeignKey('salad.id')),
+                   db.Column('order_id', db.Integer, db.ForeignKey('order.id'))
+                   )
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,6 +72,7 @@ class Order(db.Model):
     cos_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     salads = db.relationship('Salad', backref='including_order', lazy='dynamic')
     meal = db.Column(db.Enum, Enum(*meals))
+    remark = db.Column(db.String(140))
 
     def add_salad(self, salad):
         self.salads.append(salad)
@@ -76,10 +86,7 @@ class Order(db.Model):
     def __repr__(self):
         return '<Order %r>' % (self.body)
 
-cuisine = db.Table('cuisine',
-                   db.Column('salad_id', db.Integer, db.ForeignKey('salad.id')),
-                   db.Column('food_id', db.Integer, db.ForeignKey('food.id'))
-                   )
+
 
 class Salad(db.Model):
     id = db.Column(db.Integer, primary_key=True)

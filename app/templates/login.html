@@ -3,23 +3,30 @@
 
 {% block content %}
 {% include 'flash.html' %}
-<h2>输入昵称即可登录</h2>
+
 <div class="well">
-<form action="" method="post" name="login">
-    {{ form.hidden_tag() }}
-    <p>
-        nickname:<br>
-        {{ form.nickname(size=30) }}
-        {% for error in form.nickname.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
-        {{ form.remember_me }} Remember Me<br><br>
-        <input type="submit" value="Sign In" size="30">
-    </p>
-</form>
+    <h2>登录Weat！</h2>
+    <form action="" method="post" name="login">
+        {{ form.hidden_tag() }}
+        <p>
+            昵称:<br>
+            {{ form.nickname(size=30) }}
+            {% for error in form.nickname.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}<br>
+            密码：<br>
+            {{ form.password }}
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}<br>
+            {{ form.remember_me }} Remember Me<br><br>
+            <input type="submit" value="Sign In" size="30">
+        </p>
+    </form>
 </div>
 <p></p>
-<h2>第一次来吗？</h2>
-<a href="{{ url_for('signup') }}"><h3>Sign up for Weat!</h3></a>
-
+<div class="well">
+    <h2>第一次来吗？</h2>
+    <a href="{{ url_for('signup') }}"><h3>注册 Weat!</h3></a>
+</div>
 {% endblock %}

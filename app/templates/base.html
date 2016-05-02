@@ -2,9 +2,9 @@
 <html>
 <head>
     {% if title %}
-    <title>{{title}} - Weat</title>
+    <title>{{title}} - Weat 搭伙</title>
     {% else %}
-    <title>Weat</title>
+    <title>Weat 搭伙</title>
     {% endif %}
     <link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -28,12 +28,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="/"><b>Weat</b></a>
+            <a class="brand" href="/"><b>Weat!搭伙</b></a>
             <ul class="nav navbar-nav">
 
                 {% if g.user.is_authenticated %}
                 <li><a href="{{ url_for('order_add') }}">新建订单</a></li>
-                <li><a href="{{ url_for('user', nickname=g.user.nickname) }}">我的信息</a></li>
+                <li class="pull-right"><a href="{{ url_for('user', nickname=g.user.nickname) }}">{{ g.user.nickname }}</a></li>
 
 
                 {% endif %}
@@ -45,7 +45,7 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     {% if g.user.is_authenticated %}
-                    <li><a href="{{ url_for('orders') }}">订单们</a></li>
+                    <li><a href="{{ url_for('orders') }}">我的订单</a></li>
 
                     <li><a href="{{ url_for('food_add') }}">Add food</a></li>
                     <li><a href="{{ url_for('logout') }}">注销</a></li>
@@ -64,13 +64,14 @@
         </div>
     </div>
     <!--</div>-->
-</div>
-all rights reserved.
-<div class="pull-right">
 
-    <a href="/about_me">
-        about me | 关于我
-    </a>
+    <b>Weat 2016</b> | All Rights Reserved.
+    <div class="pull-right">
+
+        <a href="/about_me">
+            about me | 关于我
+        </a>
+    </div>
 </div>
 </body>
 </html>

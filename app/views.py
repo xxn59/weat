@@ -36,20 +36,24 @@ def internal_error(error):
 @login_required
 def index():
     user = g.user
-    orders = [
-        {
-            'name': 'Mango Tofu Salad',
-            'price': '27',
-            'quant': '1',
-            'floor': '23'
-        },
-        {
-            'name': 'Quinoa Okra Beef Salad',
-            'price': '35',
-            'quant': '1',
-            'floor': '23'
-        }
-    ]
+    orders = Order.query.all()
+    if request.method == 'POST':
+        # print request.form.values
+        copy_id = request.form.get('copy', None)
+        if copy_id is None:
+            pass
+        else:
+            copy_salad = Salad.query.get(copy_id)
+            new_salad = Salad(foods=copy_salad.foods, price=copy_salad.price)
+            db.session.add(new_salad)
+            new_order = Order(cos_id=user.id, status=9, price=new_salad.price)
+            new_order.salads.append(new_salad)
+
+            db.session.add(new_order)
+            db.session.commit()
+            return redirect(url_for('order_review', source='copy'))
+
+
     return render_template('index.html',
                            title='We eat together!',
                            user=user,
@@ -145,7 +149,10 @@ def user(nickname, page=1):
     return render_template('user.html',
                            user=user)
 
+
 from models import food_category
+
+
 @app.route('/food_add', methods=['GET', 'POST'])
 @login_required
 def food_add():
@@ -176,18 +183,16 @@ def food_add():
                            foods=foods)
 
 
-
 @app.route('/order_add', methods=['GET', 'POST'])
 @login_required
 def order_add():
     user = g.user
     form = AddFoodForm()
-    foods = Food.query.all()
+    foods = Food.query.filter(Food.cat != 'new_arrival').order_by(Food.price)
+    foods_new = Food.query.filter(Food.cat == 'new_arrival').order_by(Food.price)
 
     if request.method == 'POST':
         # print request.form.values
-
-
         done = request.form.get('over', None)
         # print done
         if done == "7963":
@@ -207,6 +212,10 @@ def order_add():
 
             for f in submit_salad.foods:
                 submit_salad.price = submit_salad.price + f.price
+            submit_salad.price += 4
+            if submit_salad.price < 25:
+                flash('price < 25, please add something more~')
+                return redirect(url_for('order_add'))
             for s in submit_order.salads:
                 submit_order.price = submit_order.price + s.price
 
@@ -283,6 +292,31 @@ def order_add():
     return render_template('order_add.html',
                            title='add new order',
                            form=form,
+                           foods=foods,
+                           foods_new=foods_new)
+
+
+@app.route('/order_review/<source>', methods=['GET', 'POST'])
+@login_required
+def order_review(source):
+    user = g.user
+    if source == 'copy':
+        # new_order = Order(cos_id=user.id)
+        # new_salad = Salad(order_id=new_order.id)
+        new_order = Order.query.filter_by(status=9).first()
+        if new_order is not None:
+            foods = new_order.salads[0].foods
+    # new_salad.foods =
+        if request.method == 'POST':
+            confirm = request.form.get('confirm', None)
+            if confirm == "7963":
+                pass
+                # meal = request.form.get('meal', None)
+                # if meal is None:
+                #     flash('please choose which meal you want to order')
+                #     return redirect(url_for('order_add'))
+    return render_template('order_add.html',
+                           title='add new order',
                            foods=foods)
 
 
@@ -290,28 +324,14 @@ def order_add():
 @login_required
 def orders():
     user = g.user
-    if user.level >= 3:
-        dateNow = datetime.utcnow().date()
-        timeNow = datetime.utcnow().time()
-        dinner_begin = time(4, 0)
-        dinner_end = time(19, 0)
-        query_begin = datetime.combine(dateNow, dinner_begin) - timedelta(days=1)
-        query_end = datetime.combine(dateNow, dinner_end)
-        orders = Order.query.all()
-        orders_noon = Order.query.filter(Order.timestamp.between(query_begin, query_end))
-        return render_template('orders_all.html',
-                               title='All Orders',
-                               user=user,
-                               orders=orders_noon)
-    else:
-
-        # print dateNow, timeNow
-        # if timeNow > dinner_begin and timeNow < dinner_end:  # after 12:00
-        #     print 'dinner time'
-        # else:
-        #     print 'lunch time'
-
+    if user.level < 3:
         orders = Order.query.filter_by(cos_id=user.id)
+        o = orders.first()
+        if o is None:
+            order_len = 0
+        else:
+            order_len = 1
+        print order_len
         if request.method == 'POST':
             btn = request.form.get('remove', None)
             if btn is not None:
@@ -324,10 +344,39 @@ def orders():
                 return redirect(url_for('orders'))
             else:
                 print 'btn is none'
+
         return render_template('orders.html',
                                title='My Orders',
                                user=user,
-                               orders=orders)
+                               orders=orders,
+                               len=order_len)
+
+    return redirect(url_for('orders_all'))
+
+
+@app.route('/orders_all', methods=['GET', 'POST'])
+@login_required
+def orders_all():
+    user = g.user
+    if user.level >= 3:
+        dateNow = datetime.utcnow().date()
+        # timeNow = datetime.utcnow().time()
+        time_z = time(0, 0)
+        # dinner_end = time(19, 0)
+        query_begin = datetime.combine(dateNow, time_z) - timedelta(days=1)
+        # query_end = datetime.combine(dateNow, time_z)
+        orders = Order.query.all()
+        orders_lunch = Order.query.filter(Order.status == 2, Order.meal == 'lunch')
+        orders_dinner = Order.query.filter(Order.timestamp.between(query_begin, datetime.utcnow()), Order.status == 2,
+                                         Order.meal == 'dinner')
+
+        return render_template('orders_all.html',
+                               title='All Orders',
+                               user=user,
+                               orders_lunch=orders_lunch,
+                               orders_dinner=orders_dinner
+                               )
+    return redirect(url_for('orders'))
 
 
 @app.route('/change-password', methods=['GET', 'POST'])
@@ -335,6 +384,7 @@ def orders():
 def change_password():
     form = ChangePasswordForm()
     return render_template("change_password.html", form=form)
+
 
 @app.route('/user_edit', methods=['GET', 'POST'])
 @login_required
@@ -349,9 +399,11 @@ def user_edit():
         return redirect(url_for('user'))
     return render_template("user_edit.html", user=user, form=form)
 
+
 @app.route('/pay', methods=['GET', 'POST'])
 def pay():
     return render_template("pay_test.html")
+
 
 @app.route('/about_me', methods=['GET', 'POST'])
 def about_me():

@@ -21,37 +21,14 @@
             <td>{{food.name}}</td>
             <td>{{food.price}}</td>
             <td>
-                <button type="submit" name="add" value="{{food.id}}"/>
-                到碗里来
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    下面是新品尝鲜，数量有限，先订先得哦：<br>
-    <table class="table table-condensed table-hover">
-        <thead>
-        <tr>
-            <!--<th>id</th>-->
-            <th>name</th>
-            <th>price</th>
-        </tr>
-        </thead>
-        {% for food in foods_new %}
-        <tr class="success">
-            <!--<td>{{food.id}}</td>-->
-            <td>{{food.name}}</td>
-            <td>{{food.price}}</td>
-            <td>
-                <button type="submit" name="add" value="{{food.id}}"/>
-                到碗里来
+                <button type="submit" name="remove" value="{{food.id}}"/>
+                删除
             </td>
         </tr>
         {% endfor %}
     </table>
     <input type="radio" name="meal" value="lunch"/> 午餐 | lunch
     <input type="radio" name="meal" value="dinner"/> 晚餐 | dinner<br>
-    </p>
-    <button type="submit" name="over" value="7963"/>
-    我选好了！
+    <button type="submit" name="confirm" value="7963"/>
+    确认无误，提交订单！
 </form>
-{% endblock %}

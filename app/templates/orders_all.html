@@ -16,7 +16,7 @@
         </thead>
         {% for order in orders_lunch %}
         <tr class="success">
-            <td>{{order.timestamp}}</td>
+            <td>{{ moment(order.timestamp).format('YY/MM/DD hh:mm:ss') }}</td>
             <td>{{order.customer.nickname}}</td>
             <td>{{order.customer.floor}}</td>
             <td>{{order.price}}</td>
@@ -48,7 +48,7 @@
         </thead>
         {% for order in orders_dinner %}
         <tr class="success">
-            <td>{{order.timestamp}}</td>
+            <td>{{ moment(order.timestamp).format('YY/MM/DD hh:mm:ss') }}</td>
             <td>{{order.customer.nickname}}</td>
             <td>{{order.customer.floor}}</td>
             <td>{{order.price}}</td>

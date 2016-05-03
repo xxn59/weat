@@ -20,10 +20,10 @@
 {% for order in orders %}
 {% for salad in order.salads %}
 <form action="" method="post" name="order_add">
-    <div class="well">
+    <div class="well well-large">
         <font size="5"><b>
-            {{ order.customer.nickname }}</b> </font>刚点了一份沙拉:
-        <button class="pull-right" type="submit" name="copy" value={{salad.id}}>我也来一份</button>
+            {{ order.customer.nickname }}</b> </font>点了一份沙拉:
+            <i>{{ moment(order.timestamp).fromNow() }}</i>
         <br>
         <br>
 
@@ -31,6 +31,7 @@
         {{ food.name }}
         {% endfor %}
 
+        <button class="pull-right" type="submit" name="copy" value={{salad.id}}>我也来一份</button>
 
     </div>
 </form>

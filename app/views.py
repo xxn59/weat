@@ -36,7 +36,7 @@ def internal_error(error):
 @login_required
 def index():
     user = g.user
-    orders = Order.query.all()
+    orders = Order.query.filter().order_by(Order.timestamp.desc())
     if request.method == 'POST':
         # print request.form.values
         copy_id = request.form.get('copy', None)
@@ -297,6 +297,7 @@ def order_review(source):
                     return redirect(url_for('order_review', source=source))
                 new_order = Order.query.get(confirm)
                 new_order.status = 3
+                new_order.timestamp = datetime.utcnow()
                 # # new_order.status = 3
                 new_order.meal = meal
                 db.session.commit()

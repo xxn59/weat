@@ -7,16 +7,18 @@ from flask.ext.login import LoginManager
 #from shared import db
 from flask.ext.openid import OpenID
 from config import basedir
-from .momentjs import momentjs
+from flask.ext.moment import Moment
+# from .momentjs import momentjs
 
 
 app = Flask(__name__)
-app.jinja_env.globals['momentjs'] = momentjs
+# app.jinja_env.globals['momentjs'] = momentjs
 #bootstrap = Bootstrap()
 lm = LoginManager()
 lm.login_view = 'login'
 #oid = OpenID(app, os.path.join(basedir, 'tmp'))
 db = SQLAlchemy(app)
+moment = Moment(app)
 #db.init_app(app)
 import views, models
 

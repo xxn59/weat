@@ -20,7 +20,7 @@
         </thead>
         {% for order in orders %}
         <tr class="success">
-            <td>{{momentjs(order.timestamp).fromNow()}}</td>
+            <td>{{ moment(order.timestamp).format('MMMM Do YYYY, h:mm:ss a') }}</td>
             <td>{{order.price}}</td>
             {% for salad in order.salads %}
             <td>

@@ -389,6 +389,15 @@ def user_edit():
         return redirect(url_for('user'))
     return render_template("user_edit.html", user=user, form=form)
 
+@app.route('/users', methods=['GET', 'POST'])
+@login_required
+def users():
+    user = g.user
+    if user.level < 5:
+        return redirect(url_for('index'))
+
+    users_all = User.query.all()
+    return render_template("users.html", users=users_all)
 
 @app.route('/pay', methods=['GET', 'POST'])
 def pay():

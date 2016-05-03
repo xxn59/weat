@@ -1,0 +1,30 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+users in db：<br>
+<a href="/order_add"><font size="5">现在就去订一份吧</font></a>
+<br><br><br>
+{% else %}
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>nickname</th>
+        <th>group</th>
+        <th>floor</th>
+        <th>gender</th>
+    </tr>
+    </thead>
+    {% for user in users %}
+    <tr class="success">
+        <td>{{ user.id }}</td>
+        <td>{{ user.nickname }}</td>
+        <td>{{ user.group }}</td>
+        <td>{{ user.floor }}</td>
+        <td>{{ user.gender }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

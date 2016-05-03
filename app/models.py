@@ -34,10 +34,10 @@ class User(db.Model):
         return False
 
     def is_admin(self):
-        return self.level == 3
+        return self.level == 5
 
     def is_provider(self):
-        return self.level == 4
+        return self.level == 3
 
     def get_id(self):
         try:

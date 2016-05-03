@@ -40,13 +40,11 @@ def index():
     if request.method == 'POST':
         # print request.form.values
         copy_id = request.form.get('copy', None)
-        if copy_id is None:
-            pass
-        else:
+        if copy_id is not None:
             copy_salad = Salad.query.get(copy_id)
             new_salad = Salad(foods=copy_salad.foods, price=copy_salad.price)
             db.session.add(new_salad)
-            new_order = Order(cos_id=user.id, status=9, price=new_salad.price)
+            new_order = Order(cos_id=user.id, status=9, price=new_salad.price, timestamp=datetime.utcnow())
             new_order.salads.append(new_salad)
 
             db.session.add(new_order)
@@ -197,10 +195,10 @@ def order_add():
         # print done
         if done == "7963":
             # print 'yes,done=7963'
-            meal = request.form.get('meal', None)
-            if meal is None:
-                flash('please choose which meal you want to order')
-                return redirect(url_for('order_add'))
+            # meal = request.form.get('meal', None)
+            # if meal is None:
+            #     flash('please choose which meal you want to order')
+            #     return redirect(url_for('order_add'))
             submit_order = Order.query.filter_by(cos_id=user.id, status=1).first()
             if submit_order is None:
                 flash('no unconfirmed order to submit ')
@@ -221,19 +219,18 @@ def order_add():
 
             submit_order.status = 2
             submit_salad.status = 2
-            submit_order.meal = meal
+
             submit_order.timestamp = datetime.utcnow()
 
             # print 'db commit'
             db.session.commit()
             # user.add_order(new_order)
-            return redirect(url_for('orders'))
+            return redirect(url_for('order_review', source='new'))
 
         click_id = request.form.get('add', None)
         if click_id is None:
             # print 'no click'
             pass
-
         else:
             # print 'click_id:', click_id
             new_order = Order.query.filter_by(cos_id=user.id, status=1).first()
@@ -247,29 +244,9 @@ def order_add():
                 new_salad = Salad(order_id=new_order.id, status=1)
                 db.session.add(new_salad)
                 # print 'added new salad'
-            else:
-                pass
-                # print 'continue last salad'
             food = Food.query.get(click_id)
             new_salad.foods.append(food)
-            # food_list.append(food)
-            # food_test1 = Food.query.get(1)
-            # food_test2 = Food.query.get(2)
-            # new_salad.foods.append(food_test1)
-            # new_salad.foods.append(food_test2)
-            # print 'foods in new_salad:'
-            for f in new_salad.foods:
-                pass
-
-                # print f.name
-            # for f in food_list:
-            #     print 'foods in food_list:', f.name
             db.session.commit()
-            # food1 = Food(name='dsfaef')
-            # print food.name
-            # food_list.append(food)
-            # print len(food_list)
-            # flash('add food success')
         resp = make_response('', 204)
         return resp
         # db.session.commit()
@@ -301,23 +278,36 @@ def order_add():
 def order_review(source):
     user = g.user
     if source == 'copy':
-        # new_order = Order(cos_id=user.id)
-        # new_salad = Salad(order_id=new_order.id)
-        new_order = Order.query.filter_by(status=9).first()
-        if new_order is not None:
-            foods = new_order.salads[0].foods
-    # new_salad.foods =
+        new_orders = Order.query.filter_by(cos_id=user.id, status=9)
+    if source == 'new':
+        new_orders = Order.query.filter_by(cos_id=user.id, status=2)
+        # print 'this is from newing order'
+    if new_orders is not None:
+        # print new_order.id
         if request.method == 'POST':
             confirm = request.form.get('confirm', None)
-            if confirm == "7963":
-                pass
-                # meal = request.form.get('meal', None)
-                # if meal is None:
-                #     flash('please choose which meal you want to order')
-                #     return redirect(url_for('order_add'))
-    return render_template('order_add.html',
+            remove = request.form.get('remove_order', None)
+            if confirm is not None:
+                meal = request.form.get('meal', None)
+                if meal is None:
+                    flash('please choose which meal you want to order')
+                    return redirect(url_for('order_review', source=source))
+                new_order = Order.query.get(confirm)
+                new_order.status = 3
+                # # new_order.status = 3
+                new_order.meal = meal
+                db.session.commit()
+                return redirect(url_for('orders'))
+            if remove is not None:
+                remove_order = Order.query.get(remove)
+                db.session.delete(remove_order)
+                for s in remove_order.salads:
+                    db.session.delete(s)
+                db.session.commit()
+                return redirect(url_for('order_review',source='new'))
+    return render_template('order_review.html',
                            title='add new order',
-                           foods=foods)
+                           orders=new_orders)
 
 
 @app.route('/orders', methods=['GET', 'POST'])
@@ -366,8 +356,8 @@ def orders_all():
         query_begin = datetime.combine(dateNow, time_z) - timedelta(days=1)
         # query_end = datetime.combine(dateNow, time_z)
         orders = Order.query.all()
-        orders_lunch = Order.query.filter(Order.status == 2, Order.meal == 'lunch')
-        orders_dinner = Order.query.filter(Order.timestamp.between(query_begin, datetime.utcnow()), Order.status == 2,
+        orders_lunch = Order.query.filter(Order.status == 3, Order.meal == 'lunch')
+        orders_dinner = Order.query.filter(Order.timestamp.between(query_begin, datetime.utcnow()), Order.status == 3,
                                          Order.meal == 'dinner')
 
         return render_template('orders_all.html',

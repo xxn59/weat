@@ -12,28 +12,28 @@
 </a>
 
 <!--<a href="/pay">-->
-    <!--<div class="well">-->
-        <!--<center><h3>测试：Pay Me!</h3></center>-->
-    <!--</div>-->
+<!--<div class="well">-->
+<!--<center><h3>测试：Pay Me!</h3></center>-->
+<!--</div>-->
 <!--</a>-->
 <h3>瞅瞅伙伴们都点了啥 -_-↓</h3>
 {% for order in orders %}
 {% for salad in order.salads %}
-<div class="well">
-    <font size="5"><b>
-    {{ order.customer.nickname }}</b> </font>刚点了一份沙拉:
-    <div class="pull-right">
-        <button class="submit" name="copy" value={{salad.id}} />我也来一份</td>
+<form action="" method="post" name="order_add">
+    <div class="well">
+        <font size="5"><b>
+            {{ order.customer.nickname }}</b> </font>刚点了一份沙拉:
+        <button class="pull-right" type="submit" name="copy" value={{salad.id}}>我也来一份</button>
+        <br>
+        <br>
+
+        {% for food in salad.foods %}
+        {{ food.name }}
+        {% endfor %}
+
+
     </div>
-    <br>
-    <br>
-
-    {% for food in salad.foods %}
-    {{ food.name }}
-    {% endfor %}
-
-
-</div>
+</form>
 {% endfor %}
 {% endfor %}
 <ul class="pager">

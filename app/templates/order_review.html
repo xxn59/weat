@@ -3,32 +3,49 @@
 
 {% block content %}
 {% include 'flash.html' %}
-<h3>Add new order</h3>
+<h3>确认订单</h3>
 自选沙拉的标准组合：<br>
-1份底菜 + 3种素类 + 2种肉类 = 25元~
-<form action="" method="post" name="order_add">
-    <table class="table table-condensed table-hover">
-        <thead>
-        <tr>
-            <!--<th>id</th>-->
-            <th>name</th>
-            <th>price</th>
-        </tr>
-        </thead>
-        {% for food in foods %}
-        <tr class="success">
-            <!--<td>{{food.id}}</td>-->
-            <td>{{food.name}}</td>
-            <td>{{food.price}}</td>
-            <td>
-                <button type="submit" name="remove" value="{{food.id}}"/>
-                删除
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    <input type="radio" name="meal" value="lunch"/> 午餐 | lunch
-    <input type="radio" name="meal" value="dinner"/> 晚餐 | dinner<br>
-    <button type="submit" name="confirm" value="7963"/>
-    确认无误，提交订单！
-</form>
+1份底菜 + 3种素类 + 2种肉类 = 25元~<br>
+午餐：每天上午10点前下单，晚餐：每天下午3点前下单
+
+{% for order in orders %}
+<div class="well">
+    <form action="" method="post" name="order_add">
+        订单时间：{{ order.timestamp }}
+        <table class="table table-condensed table-hover">
+            <thead>
+            <tr>
+                <!--<th>id</th>-->
+                <th>name</th>
+                <th>price</th>
+            </tr>
+            </thead>
+
+            {% for salad in order.salads %}
+            {% for food in salad.foods %}
+            <tr class="success">
+                <!--<td>{{food.id}}</td>-->
+                <td>{{food.name}}</td>
+                <td>{{food.price}}</td>
+                <td>
+
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+
+        </table>
+        总价：{{ order.price }} 元<br>
+        <input type="radio" name="meal" value="lunch"/> 午餐|lunch
+        <input type="radio" name="meal" value="dinner"/> 晚餐|dinner<br>
+        <button type="submit" name="confirm" value="{{order.id}}">
+            确认无误，提交订单！
+        </button>
+        <button class="pull-right" type="submit" name="remove_order" value="{{order.id}}">
+                        删除
+                    </button>
+    </form>
+</div>
+{% endfor %}
+
+{% endblock %}

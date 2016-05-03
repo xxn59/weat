@@ -20,6 +20,7 @@ class User(db.Model):
     orders = db.relationship('Order', backref='customer', lazy='dynamic')
     level = db.Column(db.Integer, db.ForeignKey('userlevel.level_num'))
     group = db.Column(db.String(20))
+    password = db.Column(db.String(128))
 
     @property
     def is_authenticated(self):

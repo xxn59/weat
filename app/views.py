@@ -68,7 +68,10 @@ def signup():
         user = User.query.filter_by(nickname=form.nickname.data).first()
         if user is None:
             # print 'new nickname,adding to db'
-            user = User(nickname=form.nickname.data, floor=form.floor.data, group=form.group.data)
+            user = User(nickname=form.nickname.data,
+                        floor=form.floor.data,
+                        group=form.group.data,
+                        password=form.password.data)
             db.session.add(user)
             db.session.commit()
             return redirect(request.args.get('next') or url_for('index'))

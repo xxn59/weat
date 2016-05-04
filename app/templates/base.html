@@ -22,7 +22,7 @@
 </head>
 <body>
 
-<div class="navbar navbar-fixed-top navbar-default" role="navigation">
+<div class="navbar navbar-fixed-top" role="navigation">
     <div class="navbar-inner">
         <div class="container">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -34,8 +34,8 @@
             <ul class="nav navbar-nav">
 
                 {% if g.user.is_authenticated %}
-                <li><a href="{{ url_for('order_add') }}">新建订单</a></li>
-                <li class="pull-right"><a href="{{ url_for('user', nickname=g.user.nickname) }}">{{ g.user.nickname }}</a></li>
+                <li><a id="index" href="{{ url_for('index') }}">首页</a></li>
+                <li><a id="order_add" href="{{ url_for('order_add') }}">新建订单</a></li>
 
 
                 {% endif %}
@@ -47,15 +47,22 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     {% if g.user.is_authenticated %}
-                    <li><a href="{{ url_for('orders') }}">我的订单</a></li>
 
-                    <li><a href="{{ url_for('food_add') }}">Add food</a></li>
+                    {% if g.user.level >= 3 %}
+                    <li><a id="food_add" href="{{ url_for('food_add') }}">添加单品</a></li>
+                    <li><a id="orders_all" href="{{ url_for('orders') }}">订单管理</a></li>
+                    {% else %}
+                    <li><a id="orders" href="{{ url_for('orders') }}">我的订单</a></li>
+                    {% endif %}
+                    {% if g.user.level >= 5 %}
+                    <li><a id="users" href="{{ url_for('users') }}">用户概览</a></li>
+                    {% endif %}
+                    {% endif %}
+                    <li class="divider"></li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a id="user" href="{{ url_for('user', nickname=g.user.nickname) }}">{{ g.user.nickname }}</a></li>
                     <li><a href="{{ url_for('logout') }}">注销</a></li>
-                    <!--<li><a href="{{ url_for('food_add') }}">Add food</a></li>-->
-                    {% endif %}
-                    {% if g.user.level == 5 %}
-                    <li><a href="{{ url_for('users') }}">用户概览</a></li>
-                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -80,3 +87,7 @@
 </div>
 </body>
 </html>
+<script>
+  $(document).ready(function () {
+  $("#{{request.endpoint}}").parent().addClass("active"); })
+</script>

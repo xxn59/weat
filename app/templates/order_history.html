@@ -1,0 +1,39 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+Order History：</h3>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>时间</th>
+            <th>顾客</th>
+            <th>楼层</th>
+            <th>价格</th>
+            <th>meal</th>
+            <th>沙拉</th>
+        </tr>
+        </thead>
+        {% for order in orders_lunch %}
+        <tr class="success">
+            <td>{{ moment(order.timestamp).format('YY/MM/DD hh:mm:ss') }}</td>
+            <td>{{order.customer.nickname}}</td>
+            <td>{{order.customer.floor}}</td>
+            <td>{{order.price}}</td>
+            <td>{{order.meal}}</td>
+            {% for salad in order.salads %}
+            <td>
+                {% for food in salad.foods %}
+                {{food.name}}
+                {% endfor %}
+            </td>
+            <!--<td>-->
+                <!--<td><button type="submit" name="remove" value="{{salad.id}}" />取消</td>-->
+            <!--</td>-->
+            {% endfor %}
+            <!--<td></td>-->
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

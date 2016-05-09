@@ -124,3 +124,10 @@ class Food(db.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(10), index=True)
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
